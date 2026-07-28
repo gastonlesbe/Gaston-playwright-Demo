@@ -25,6 +25,27 @@ class MainLoginPage {
     async loginErrorMessage() {
         return await this.errorMessage.isVisible();
     }
+
+    async errorMessageText() {
+        return await this.errorMessage.textContent();
+    }
+
+    async passwordFieldType() {
+        return await this.passwordInput.getAttribute('type');
+    }
+
+    async captureDialogsDuring(action) {
+        // Runs `action` while capturing any JS dialogs (alert/confirm/prompt) it
+        // triggers, auto-dismissing each one. Used to catch reflected-XSS
+        // regressions without letting a dialog block the test.
+        const messages = [];
+        this.page.once('dialog', dialog => {
+            messages.push(dialog.message());
+            dialog.dismiss();
+        });
+        await action();
+        return messages;
+    }
 }
 
 module.exports = MainLoginPage;
