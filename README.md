@@ -1,18 +1,40 @@
 # Gaston Demo Playwright
 
-This project contains automated Page Object Model tests against [saucedemo.com](https://www.saucedemo.com), written in JavaScript with the Playwright test runner.
+Automated Page Object Model tests against [saucedemo.com](https://www.saucedemo.com),
+written in Python with `pytest` and `pytest-playwright`, covering the full user journey:
+login → browse/sort inventory → cart → checkout.
+
+## Project structure
+
+- `config/` — base URL and test-account constants
+- `locators/` — CSS selectors per page, one class per page object
+- `pages/` — Page Object Model classes (`BasePage` + one subclass per page)
+- `tests/ui/` — test suites, one file per page/flow
 
 ## Test cases
 
-**Login** (`tests/test_main_login.spec.js`)
-- `test_login_successful_C01` — valid credentials log in successfully
-- `test_login_wrong_password_C02` — wrong password shows an error
-- `test_login_wrong_username_C03` — wrong username shows an error
+**Login** (`tests/ui/test_login.py`)
+- `test_login_successful_standard_user` — valid credentials log in successfully
+- `test_login_wrong_password_shows_error` — wrong password shows an error
+- `test_login_wrong_username_shows_error` — wrong username shows an error
+- `test_login_locked_out_user_shows_error` — locked-out account is rejected
+- `test_login_empty_username_shows_error` — client-side validation on empty username
 
-**Home** (`tests/test_home_first_item.spec.js`) — clicking the first item on the home page
-opens its detail view.
+**Inventory** (`tests/ui/test_inventory.py`)
+- `test_first_item_detail_matches_listing` — clicking an item opens a detail view with matching name/price
+- `test_sort_price_low_to_high` — price sort orders items ascending
+- `test_sort_name_z_to_a` — name sort orders items descending
 
-**Cart** (`tests/test_add_to_cart.spec.js`) — adding the first item to the cart.
+**Cart** (`tests/ui/test_cart.py`)
+- `test_add_single_item_updates_badge_and_cart` — adding an item updates the cart badge and cart contents
+- `test_add_multiple_items_updates_badge_count` — badge count reflects multiple items
+- `test_remove_item_from_cart_updates_badge` — removing an item clears the cart and badge
+
+**Checkout** (`tests/ui/test_checkout.py`)
+- `test_checkout_happy_path_completes_order` — full checkout flow reaches order confirmation
+- `test_checkout_missing_first_name_shows_error` — required-field validation
+- `test_checkout_missing_postal_code_shows_error` — required-field validation
+- `test_checkout_totals_add_up` — subtotal + tax equals total
 
 See `REQUIREMENTS.md` for setup and run instructions.
 
