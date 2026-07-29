@@ -8,15 +8,6 @@ This project contains automated Page Object Model tests against [saucedemo.com](
 - `test_login_successful_C01` — valid credentials log in successfully
 - `test_login_wrong_password_C02` — wrong password shows an error
 - `test_login_wrong_username_C03` — wrong username shows an error
-- `test_login_password_field_is_masked_C04` — password input stays `type="password"`
-- `test_login_username_password_errors_are_indistinguishable_C05` — wrong password and
-  wrong username produce the identical error message (no user enumeration)
-- `test_login_locked_out_user_shows_lockout_message_C06` — `locked_out_user` shows the
-  lockout message
-- `test_login_username_field_resists_script_injection_C07` — a script-tag payload in the
-  username field triggers no JS dialog and never authenticates
-- `test_login_error_does_not_echo_password_C08` — the error message never reflects the
-  submitted password back
 
 **Home** (`tests/test_home_first_item.spec.js`) — clicking the first item on the home page
 opens its detail view.
