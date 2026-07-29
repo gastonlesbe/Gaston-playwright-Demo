@@ -1,15 +1,21 @@
 # Gaston Demo Playwright
 
-Automated Page Object Model tests against [saucedemo.com](https://www.saucedemo.com),
-written in Python with `pytest` and `pytest-playwright`, covering the full user journey:
-login → browse/sort inventory → cart → checkout.
+Automated tests written in Python with `pytest`:
+
+- **UI** — Page Object Model tests against [saucedemo.com](https://www.saucedemo.com)
+  with `pytest-playwright`, covering the full user journey: login → browse/sort
+  inventory → cart → checkout.
+- **API** — REST tests against [reqres.in](https://reqres.in) with `requests`, covering
+  CRUD on `/api/users` and API-key auth enforcement.
 
 ## Project structure
 
-- `config/` — base URL and test-account constants
+- `config/` — base URLs, test-account constants, and API key loading (`.env`)
 - `locators/` — CSS selectors per page, one class per page object
 - `pages/` — Page Object Model classes (`BasePage` + one subclass per page)
-- `tests/ui/` — test suites, one file per page/flow
+- `api/` — thin `requests` wrapper (`APIClient`) used by API tests
+- `tests/ui/` — UI test suites, one file per page/flow
+- `tests/api/` — API test suites
 
 ## Test cases
 
@@ -36,7 +42,40 @@ login → browse/sort inventory → cart → checkout.
 - `test_checkout_missing_postal_code_shows_error` — required-field validation
 - `test_checkout_totals_add_up` — subtotal + tax equals total
 
+**Users API** (`tests/api/test_users.py`) — requires a free `REQRES_API_KEY` from
+[app.reqres.in/api-keys](https://app.reqres.in/api-keys) (see `.env.example`); the whole
+file skips gracefully if it's unset.
+- `test_list_users_returns_200_and_paginated_data` — list endpoint shape and pagination fields
+- `test_list_users_pagination_returns_distinct_pages` — page 1 and page 2 return disjoint ids
+- `test_get_single_user_returns_matching_id` — fetch by id returns that id
+- `test_get_nonexistent_user_returns_404` — unknown id returns 404
+- `test_create_user_returns_201_with_submitted_fields` — POST echoes submitted fields plus `id`/`createdAt`
+- `test_update_user_put_returns_200_with_updated_fields` — full update reflects new fields
+- `test_partial_update_user_patch_returns_200_with_updated_field` — partial update reflects changed field only
+- `test_delete_user_returns_204` — delete returns an empty 204
+- `test_request_without_api_key_returns_401` — missing `x-api-key` is rejected (asserted via `POST`,
+  since reqres.in's CDN caches authenticated `GET` responses without varying the cache key on
+  `x-api-key` — a real cache-key/auth bypass on cached reads, not something to build a flaky
+  assertion around)
+
 See `REQUIREMENTS.md` for setup and run instructions.
+
+## Sample test report
+
+Latest local run — 24/24 passed in 14.4s (`pytest --durations=0`, chromium, headless):
+
+| Suite | File | Tests | Passed |
+|---|---|---|---|
+| Login | `tests/ui/test_login.py` | 5 | 5 |
+| Inventory | `tests/ui/test_inventory.py` | 3 | 3 |
+| Cart | `tests/ui/test_cart.py` | 3 | 3 |
+| Checkout | `tests/ui/test_checkout.py` | 4 | 4 |
+| Users API | `tests/api/test_users.py` | 9 | 9 |
+| **Total** | | **24** | **24** |
+
+Full `pytest-html` report for that run:
+
+![Sample pytest-html report showing 24 passed tests](docs/sample-report.png)
 
 ---
 

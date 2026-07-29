@@ -11,6 +11,8 @@ Use this checklist before running the Playwright tests.
 - Create and activate a virtual environment: `python3 -m venv .venv && source .venv/bin/activate`
 - Install dependencies: `pip install -r requirements.txt`
 - Install Playwright browsers: `playwright install chromium`
+- For the API tests: copy `.env.example` to `.env` and add a free key from
+  [app.reqres.in/api-keys](https://app.reqres.in/api-keys) — `tests/api/` skips itself if unset
 
 ## Optional
 - Run headed (visible browser): `pytest --headed`
@@ -20,5 +22,6 @@ Use this checklist before running the Playwright tests.
 ## Run
 - `pytest`
 - Run one file: `pytest tests/ui/test_login.py`
+- Run by suite: `pytest -m ui` or `pytest -m api`
 - Run by marker: `pytest -m smoke`
 - View report: open `reports/report.html` after a run

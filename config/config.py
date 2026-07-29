@@ -1,8 +1,14 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class Config:
     BASE_URL = os.getenv("BASE_URL", "https://www.saucedemo.com")
+    API_BASE_URL = os.getenv("API_BASE_URL", "https://reqres.in")
+    REQRES_API_KEY = os.getenv("REQRES_API_KEY", "")
 
 
 class Users:
